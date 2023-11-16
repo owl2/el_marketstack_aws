@@ -13,16 +13,15 @@ fi
 # Create a temporary directory for staging files
 mkdir tmp
 
-# Copy main.py to the temporary directory
-cp -r "$PROJECT_DIRECTORY"/* tmp
+# Copy the developments into the package
+cd el_marketstack_aws
+zip -r ../"$ZIP_FILE_NAME" .
+cd ..
 
-# Copy the .venv directory to the temporary directory
-# cp -r ".venv" tmp
-
-ls -al tmp
-
-# Create the zip file
-zip -r "$ZIP_FILE_NAME" -j "$TEMP_DIR/"
+# Copy the virtual env bin into the package
+cd .venv/lib/python3.8/site-packages
+zip -r ../../../../"$ZIP_FILE_NAME" .
+cd ../../../..
 
 # Clean up temporary directory
 rm -r tmp
