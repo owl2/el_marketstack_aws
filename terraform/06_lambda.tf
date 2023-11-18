@@ -6,4 +6,9 @@ resource "aws_lambda_function" "lambda_marketstack" {
   handler       = "main.handler"
 
   source_code_hash = local.lambda_package_hash
+
+  tags = {
+    Name        = "project"
+    Environment = "aws_glue_heads_on"
+  }
 }
