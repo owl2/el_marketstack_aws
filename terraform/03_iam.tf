@@ -18,24 +18,44 @@ resource "aws_iam_role" "lambda_marketstack_role" {
 }
 
 
-# Secret Manager policy
 data "aws_iam_policy_document" "lambda_marketstack" {
+  # Secret Manager Read Only Access
   statement {
     effect    = "Allow"
-    actions   = ["secretsmanager:GetSecretValue"]
+    actions   = ["secretsmanager:GetResourcePolicy", "secretsmanager:GetSecretValue", "secretsmanager:DescribeSecret", "secretsmanager:ListSecretVersionIds"]
     resources = [data.aws_secretsmanager_secret.marketstack_api.arn]
   }
 
   statement {
     effect    = "Allow"
-    actions   = ["s3:GetObject","s3:ListBucket"]
+    actions   = ["secretsmanager:ListSecrets"]
+    resources = ["*"]
+  }
+
+  # S3 
+  statement {
+    effect    = "Allow"
+    actions   = ["s3:GetObject", "s3:ListBucket"]
     resources = ["${aws_s3_bucket.lmu-marketstack-poc.arn}"]
   }
 
   statement {
     effect    = "Allow"
-    actions   = ["s3:PutObject","s3:GetObject","s3:ListBucket","s3:DeleteObject"]
+    actions   = ["s3:PutObject", "s3:GetObject", "s3:ListBucket", "s3:DeleteObject"]
     resources = ["${aws_s3_bucket.lmu-marketstack-poc.arn}/*"]
+  }
+
+  # Cloudwatch 
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents",
+    ]
+
+    resources = ["arn:aws:logs:*:*:*"]
   }
 }
 
